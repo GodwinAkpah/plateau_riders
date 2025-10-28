@@ -93,6 +93,7 @@ class SignInScreenController extends GetxController {
       };
 
       final APIResponse response = await _authService.login(payload);
+      print(response);
 
       isLoading = false;
       // Safety check: only update if the controller is still active.
