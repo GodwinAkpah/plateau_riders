@@ -122,7 +122,7 @@ class SignInScreenController extends GetxController {
         update();
         Get.snackbar(
           "Login Failed",
-          response.message,
+          response.message ?? "An unknown error occurred",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
