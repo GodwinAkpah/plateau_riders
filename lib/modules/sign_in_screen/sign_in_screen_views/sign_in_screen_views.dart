@@ -2,6 +2,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:plateau_riders/modules/sign_in_screen/sign_in_screen_controller/sign_in_screen_controllers.dart';
 
 class SignInScreenView extends GetView<SignInScreenController> {
@@ -27,7 +28,7 @@ class SignInScreenView extends GetView<SignInScreenController> {
                 children: [
                   Text(
                     'Welcome Back',
-                    style: TextStyle(
+                    style: GoogleFonts.urbanist(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -35,12 +36,22 @@ class SignInScreenView extends GetView<SignInScreenController> {
                   const SizedBox(height: 8),
                   Text(
                     'Access your trips, tickets, and booking history anytime',
-                    style: TextStyle(color: Colors.grey),
+                    style: GoogleFonts.urbanist(
+                      color: Color(0xFF8A8A8A),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      height: 1.3,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Text(
                     'Phone Number / Email',
-                    style: TextStyle(color: Colors.grey),
+                    style: GoogleFonts.urbanist(
+                      color: Color(0xFF8A8A8A),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      height: 1.3,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
@@ -62,7 +73,12 @@ class SignInScreenView extends GetView<SignInScreenController> {
                   const SizedBox(height: 16),
                   Text(
                     'Password',
-                    style: TextStyle(color: Colors.grey),
+                    style: GoogleFonts.urbanist(
+                      color: Color(0xFF8A8A8A),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      height: 1.3,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
@@ -94,7 +110,12 @@ class SignInScreenView extends GetView<SignInScreenController> {
                   RichText(
                     text: TextSpan(
                       text: 'By signing up you agree to our ',
-                      style: TextStyle(color: Colors.grey),
+                      style: GoogleFonts.urbanist(
+                        color: Color(0xFF8A8A8A),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        height: 1.3,
+                      ),
                       children: [
                         TextSpan(
                           text: 'Terms & Conditions',
@@ -121,21 +142,37 @@ class SignInScreenView extends GetView<SignInScreenController> {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  SizedBox(
+                  Container(
                     width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF009300), Color(0xFF022102)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
                     child: ElevatedButton(
                       child: controller.isLoading
                           ? CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             )
-                          : Text('Continue'),
+                          : Text(
+                              'Continue',
+                              style: GoogleFonts.urbanist(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                       onPressed: controller.performSignIn,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.transparent,
                         padding: EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
+                        shadowColor: Colors.transparent,
                       ),
                     ),
                   ),
@@ -145,7 +182,12 @@ class SignInScreenView extends GetView<SignInScreenController> {
                     child: Text.rich(
                       TextSpan(
                         text: 'Already have an account? ',
-                        style: TextStyle(color: Colors.grey),
+                        style: GoogleFonts.urbanist(
+                          color: Color(0xFF8A8A8A),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          height: 1.3,
+                        ),
                         children: [
                           TextSpan(
                             text: 'Sign in',
