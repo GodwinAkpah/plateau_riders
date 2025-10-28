@@ -153,11 +153,12 @@ class SignInScreenView extends GetView<SignInScreenController> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: ElevatedButton(
-                      child: controller.isLoading
-                          ? CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            )
-                          : Text(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Opacity(
+                            opacity: controller.isLoading ? 0.0 : 1.0,
+                            child: Text(
                               'Continue',
                               style: GoogleFonts.urbanist(
                                 color: Colors.white,
@@ -165,7 +166,22 @@ class SignInScreenView extends GetView<SignInScreenController> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                      onPressed: controller.performSignIn,
+                          ),
+                          Opacity(
+                            opacity: controller.isLoading ? 1.0 : 0.0,
+                            child: SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                                strokeWidth: 2.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: controller.isLoading ? null : controller.performSignIn,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         padding: EdgeInsets.symmetric(vertical: 16),

@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:plateau_riders/modules/main_app_screens/screens/home_screen/home_screen.dart';
 
 class MainBottomNavController extends GetxController {
 
@@ -7,8 +9,14 @@ class MainBottomNavController extends GetxController {
   // The currently selected tab index. .obs makes it observable.
   var selectedIndex = 0.obs;
   
-  // The flag that controls the VendorHomeScreen's content. .obs makes it observable.
-  // var vendorHasServices = false.obs;
+  // The list of pages to be displayed in the bottom navigation.
+  final List<Widget> pages = [
+    HomeScreen(),
+    // TODO: Replace with actual screens
+    Scaffold(body: Center(child: Text("Trips"))),
+    Scaffold(body: Center(child: Text("Track"))),
+    Scaffold(body: Center(child: Text("Account"))),
+  ];
 
   // --- ACTIONS ---
 
@@ -16,11 +24,4 @@ class MainBottomNavController extends GetxController {
   void changeTabIndex(int index) {
     selectedIndex.value = index;
   }
-
-  /// This function is called from AddServiceScreen when a new service is added.
-//   void onServiceAdded() {
-//     vendorHasServices.value = true;
-//     // We don't need to call update() because .obs variables update automatically.
-//   }
-
 }
