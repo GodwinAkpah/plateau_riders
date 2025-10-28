@@ -3,6 +3,8 @@
 import 'package:get/get.dart';
 import 'package:plateau_riders/modules/main_app_screens/navigation/main_bottom_nav.dart';
 import 'package:plateau_riders/modules/main_app_screens/navigation/main_bottom_nav_bindings.dart';
+import 'package:plateau_riders/modules/sign_in_screen/sign_in_screen_binding/sign_in_screen_bindings.dart';
+import 'package:plateau_riders/modules/sign_in_screen/sign_in_screen_views/sign_in_screen_views.dart';
 
 
 part 'app_routes.dart';
@@ -10,7 +12,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.SPLASH;
+  static const initial = Routes.SIGN_IN;
 
   static final routes = [
    
@@ -29,11 +31,11 @@ class AppPages {
 
    
 
-    //   GetPage(
-    //   name: _Paths.SIGN_IN ,
-    //   page: () => const SignInScreen(),
-    //   binding: SignInScreenBinding(),
-    // ),
+      GetPage(
+      name: _Paths.SIGN_IN ,
+      page: () => const SignInScreen(),
+      binding: SignInScreenBinding(),
+    ),
    
 
     GetPage(
