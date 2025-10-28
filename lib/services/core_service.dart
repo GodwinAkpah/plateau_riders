@@ -9,7 +9,7 @@ class CoreService extends GetConnect {
   final getStorage = GetStorage();
 
   CoreService() {
-    _dio.options.baseUrl = "https://esemunch.gnorizon.com/api/v1";
+    _dio.options.baseUrl = "https://v3.transportr.africa/api/v1";
     setConfig();
   }
 

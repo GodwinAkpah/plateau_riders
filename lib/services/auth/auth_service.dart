@@ -9,7 +9,7 @@ class AuthenticationService extends CoreService {
       await send("/customers/register", data);
   // await send("/auth/register", data);
   Future<APIResponse> login(dynamic data) async =>
-      await send("/customers/login", data);
+      await send("/auth/login", data);
   Future<APIResponse> logout() async => await send("/auth/logout", {});
 
   // --- PASSWORD MANAGEMENT ---
