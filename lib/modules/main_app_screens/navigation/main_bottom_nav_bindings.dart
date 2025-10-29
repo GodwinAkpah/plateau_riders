@@ -8,6 +8,7 @@ class MainBottomNavBindings extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<MainBottomNavController>(() => MainBottomNavController());
+     Get.lazyPut<HomeController>(() => HomeController());
     // These are the controllers for each of your tab screens
     // Get.lazyPut<HomeController>(() => HomeController());
     // Get.lazyPut<AddServicesController>(() => AddServicesController());

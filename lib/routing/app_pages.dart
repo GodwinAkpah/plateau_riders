@@ -13,6 +13,8 @@ class AppPages {
   AppPages._();
 
   static const initial = Routes.SIGN_IN;
+  //  static const initial = Routes.MAINBOTTOMNAV;
+ 
 
   static final routes = [
    
@@ -33,7 +35,7 @@ class AppPages {
 
       GetPage(
       name: _Paths.SIGN_IN ,
-      page: () => const SignInScreen(),
+      page: () => const  SignInScreenView(),
       binding: SignInScreenBinding(),
     ),
    

@@ -1,9 +1,10 @@
+// lib/services/models/api_response.dart
 import 'dart:convert';
 
 class APIResponse {
   String status;
   String message;
-  dynamic data;
+  dynamic data; // Keep as dynamic to hold the actual data object
   APIResponse({
     required this.status,
     required this.message,
@@ -12,7 +13,7 @@ class APIResponse {
 
   Map<String, dynamic> toMap() {
     return {
-      'success': status,
+      'status': status, // Changed 'success' to 'status' to match API
       'message': message,
       'data': data,
     };
@@ -20,9 +21,9 @@ class APIResponse {
 
   factory APIResponse.fromMap(Map<String, dynamic> map) {
     return APIResponse(
-      status: map['status'] ??"" ,
-      message: map['message']?? map['error']??"",
-      data: map['data'] ?? "",
+      status: map['status'] ?? "error", // Default to "error" if status is missing
+      message: map['message'] ?? map['error'] ?? "An unknown error occurred.",
+      data: map['data'], // Directly assign map['data'] which can be null or an object
     );
   }
 
