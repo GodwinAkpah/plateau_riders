@@ -16,6 +16,7 @@ class SelectCityBottomSheet extends StatelessWidget {
         ),
       ),
       child: Column(
+
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(

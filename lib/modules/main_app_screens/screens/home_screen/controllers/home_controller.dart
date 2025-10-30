@@ -34,7 +34,7 @@ class HomeController extends GetxController {
   // --- Bottom Sheet Logic ---
 
   Future<void> showCitySelectionBottomSheet({required bool isFrom}) async {
-    final List<String> availableCities = ['F.C.T, Abuja', 'Plateau, Jos', 'Kano', 'Lagos', 'Enugu', 'Kaduna']; // Example cities
+    final List<String> availableCities = ['F.C.T, Abuja', 'Plateau, Jos']; // Example cities
     final selected = await Get.bottomSheet<String>(
       _buildCitySelectionSheet(availableCities),
       backgroundColor: Colors.transparent, // Make transparent to show custom shape

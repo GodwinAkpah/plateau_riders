@@ -277,7 +277,7 @@ class HomeScreen extends GetView<HomeController> {
           const SizedBox(width: 15),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Vehicle Type',
