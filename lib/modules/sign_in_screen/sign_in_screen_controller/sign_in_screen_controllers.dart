@@ -1,153 +1,15 @@
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:get_storage/get_storage.dart';
-// import 'package:plateau_riders/routing/app_pages.dart';
-// import 'package:plateau_riders/services/auth/auth_service.dart';
-// import 'package:plateau_riders/services/models/api_response.dart';
-// import 'package:plateau_riders/services/service_manifest.dart';
-
-// class SignInScreenController extends GetxController {
-//   // --- DEPENDENCIES ---
-//   final AuthenticationService _authService =
-//       serviceLocator<AuthenticationService>();
-//   final _storage = GetStorage();
-
-//   // --- STATE & UI CONTROLLERS ---
-//   final formKey = GlobalKey<FormState>();
-//   final emailPhoneController = TextEditingController();
-//   final passwordController = TextEditingController();
-//   final emailPhoneFocusNode = FocusNode();
-//   final passwordFocusNode = FocusNode();
-
-//   bool obscurePassword = true;
-//   bool isLoading = false;
-//   bool emailPhoneIsSpecialState = true;
-//   final String backgroundImageUrl = 'assets/imgs/market.jpg';
-//   late VoidCallback _passwordFocusListener;
-
-//   // --- LIFECYCLE ---
-//   @override
-//   void onInit() {
-//     super.onInit();
-
-//     emailPhoneController.addListener(updateEmailPhoneSpecialState);
-//     emailPhoneFocusNode.addListener(updateEmailPhoneSpecialState);
-
-//     _passwordFocusListener = () => update();
-//     passwordFocusNode.addListener(_passwordFocusListener);
-
-//     updateEmailPhoneSpecialState();
-//   }
-
-//   @override
-//   void dispose() {
-//     emailPhoneController.removeListener(updateEmailPhoneSpecialState);
-//     emailPhoneFocusNode.removeListener(updateEmailPhoneSpecialState);
-//     passwordFocusNode.removeListener(_passwordFocusListener);
-
-//     // emailPhoneController.dispose();
-//     // passwordController.dispose();
-//     emailPhoneFocusNode.dispose();
-//     passwordFocusNode.dispose();
-
-//     super.dispose();
-//   }
-//   // ----------------------------------------------------
-
-//   // --- LOGIC / ACTIONS ---
-//   void updateEmailPhoneSpecialState() {
-//     // Add a safety check to ensure the controller hasn't been disposed.
-//     if (isClosed) return;
-
-//     final bool newState = emailPhoneController.text.isEmpty;
-//     if (emailPhoneIsSpecialState != newState) {
-//       emailPhoneIsSpecialState = newState;
-//       update();
-//     }
-//   }
-
-//   void togglePasswordVisibility() {
-//     obscurePassword = !obscurePassword;
-//     update();
-//   }
-
-//   void navigateToCreateAccount() {
-//     FocusScope.of(Get.context!).unfocus();
-
-//     // Get.toNamed(Routes.SETPASSWORDSCREEN);
-//     // Get.toNamed(Routes.CREATEACCOUNTSCREEN);
-//   }
-
-//   void navigateToForgotPassword() {
-//     // Get.toNamed(Routes.RESETPASSWORDSCREEN);
-//   }
-
-//   Future<void> performSignIn() async {
-//     if (formKey.currentState!.validate()) {
-//       isLoading = true;
-//       update();
-
-//       final Map<String, dynamic> payload = {
-//         "login": emailPhoneController.text.trim(),
-//         "password": passwordController.text.trim(),
-//       };
-
-//       final APIResponse response = await _authService.login(payload);
-//       print(response);
-
-//       isLoading = false;
-//       // Safety check: only update if the controller is still active.
-//       if (!isClosed) {
-//         update();
-//       }
-
-//       if (response.status == 'success') {
-//         final String token = response.data['auth_token'];
-//         final String userName = response.data['user']['fname'];
-//         final userData = response.data;
-
-//         await _storage.write('auth_token', token);
-//         await _storage.write('user_data', userData);
-//         await _storage.write('show_movie', true);
-//         Get.offAllNamed(Routes.MAINBOTTOMNAV);
-//         Get.snackbar(
-//           "Login Successful",
-//           "Welcome back, $userName!",
-//           snackPosition: SnackPosition.BOTTOM,
-//           backgroundColor: Colors.green,
-//           colorText: Colors.white,
-//         );
-//       } else {
-//         isLoading = false;
-//         update();
-//         Get.snackbar(
-//           "Login Failed",
-//           response.message ?? "An unknown error occurred",
-//           snackPosition: SnackPosition.BOTTOM,
-//           backgroundColor: Colors.red,
-//           colorText: Colors.white,
-//         );
-//       }
-//     }
-//   }
-// }
-
-
-
-
-// lib/modules/sign_in_screen/sign_in_screen_controller/sign_in_screen_controllers.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:plateau_riders/routing/app_pages.dart';
-import 'package:plateau_riders/services/auth/auth_service.dart';
-import 'package:plateau_riders/services/models/api_response.dart';
-import 'package:plateau_riders/services/service_manifest.dart';
+import 'package:plateau_riders/services/auth/authentication_service.dart';
+
+import 'package:plateau_riders/services/models/api_response_T.dart';
+import 'package:plateau_riders/services/models/register_response.dart';
 
 class SignInScreenController extends GetxController {
-    // --- DEPENDENCIES ---
-  final AuthenticationService _authService =
-      serviceLocator<AuthenticationService>();
+  // --- DEPENDENCIES ---
+  final AuthenticationService _authService = Get.find<AuthenticationService>();
   final _storage = GetStorage();
 
   // --- STATE & UI CONTROLLERS ---
@@ -157,123 +19,89 @@ class SignInScreenController extends GetxController {
   final emailPhoneFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
 
-  bool obscurePassword = true;
-  bool isLoading = false;
-  bool emailPhoneIsSpecialState = true;
-  final String backgroundImageUrl = 'assets/imgs/market.jpg';
-  late VoidCallback _passwordFocusListener;
+  var obscurePassword = true.obs;
+  var isLoading = false.obs;
+  var emailPhoneIsSpecialState = true.obs;
 
   // --- LIFECYCLE ---
   @override
   void onInit() {
     super.onInit();
-
     emailPhoneController.addListener(updateEmailPhoneSpecialState);
-    emailPhoneFocusNode.addListener(updateEmailPhoneSpecialState);
-
-    _passwordFocusListener = () => update();
-    passwordFocusNode.addListener(_passwordFocusListener);
-
-    updateEmailPhoneSpecialState();
   }
 
   @override
-  void dispose() {
+  void onClose() {
     emailPhoneController.removeListener(updateEmailPhoneSpecialState);
-    emailPhoneFocusNode.removeListener(updateEmailPhoneSpecialState);
-    passwordFocusNode.removeListener(_passwordFocusListener);
-
-    // emailPhoneController.dispose();
-    // passwordController.dispose();
+    emailPhoneController.dispose();
+    passwordController.dispose();
     emailPhoneFocusNode.dispose();
     passwordFocusNode.dispose();
-
-    super.dispose();
+    super.onClose();
   }
-  // ----------------------------------------------------
 
   // --- LOGIC / ACTIONS ---
   void updateEmailPhoneSpecialState() {
-    // Add a safety check to ensure the controller hasn't been disposed.
-    if (isClosed) return;
-
-    final bool newState = emailPhoneController.text.isEmpty;
-    if (emailPhoneIsSpecialState != newState) {
-      emailPhoneIsSpecialState = newState;
-      update();
-    }
+    emailPhoneIsSpecialState.value = emailPhoneController.text.isEmpty;
   }
 
   void togglePasswordVisibility() {
-    obscurePassword = !obscurePassword;
-    update();
+    obscurePassword.value = !obscurePassword.value;
   }
 
   void navigateToCreateAccount() {
-    FocusScope.of(Get.context!).unfocus();
-
-    // Get.toNamed(Routes.SETPASSWORDSCREEN);
-    // Get.toNamed(Routes.CREATEACCOUNTSCREEN);
+    // Get.toNamed(Routes.CREATE_ACCOUNT); // Update with your actual route name
   }
 
   void navigateToForgotPassword() {
-    // Get.toNamed(Routes.RESETPASSWORDSCREEN);
+    // Get.toNamed(Routes.FORGOT_PASSWORD); // Update with your actual route name
   }
 
-  // ... (existing dependencies and UI controllers) ...
-
-  // --- LOGIC / ACTIONS ---
-  // ... (existing methods like updateEmailPhoneSpecialState, togglePasswordVisibility, navigateToCreateAccount, navigateToForgotPassword) ...
-
   Future<void> performSignIn() async {
+    // Unfocus any text fields to hide the keyboard
+    FocusScope.of(Get.context!).unfocus();
+
     if (formKey.currentState!.validate()) {
-      isLoading = true;
-      update();
+      isLoading.value = true;
 
-      final Map<String, dynamic> payload = {
-        "login": emailPhoneController.text.trim(),
-        "password": passwordController.text.trim(),
-      };
+      // Call the correct method name (`loginUser`) and pass named arguments.
+      final APIResponse<RegisterResponse> response = await _authService.loginUser(
+        email: emailPhoneController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-      final APIResponse response = await _authService.login(payload);
-      print("API Response: $response"); // Debugging
+      isLoading.value = false;
 
-      isLoading = false;
-      if (!isClosed) {
-        update();
-      }
-
-      if (response.status == 'success') {
-        // --- FIX START ---
-        // Access the 'data' map from the API response
-        final Map<String, dynamic> responseData = response.data;
+      if (response.status == 'success' && response.data != null) {
+        // Access data in a type-safe way from the RegisterResponse object.
+        // THIS WILL NOW WORK
+        final String token = response.data!.authToken;
+        final String userName = response.data!.user.firstname;
         
-        final String token = responseData['token']; // Corrected key to 'token'
-        final String userName = responseData['user']['firstname']; // Access user's first name
-        final Map<String, dynamic> userData = responseData['user']; // Store just the user data
-        // --- FIX END ---
-
+        // The service now handles the user object. We just need to persist the token.
         await _storage.write('auth_token', token);
-        await _storage.write('user_data', userData); // Storing the user map
-        await _storage.write('show_movie', true); // Keep this if it's still needed
 
+        // Navigate to the main app screen upon successful login.
         Get.offAllNamed(Routes.MAINBOTTOMNAV);
+        
         Get.snackbar(
           "Login Successful",
           "Welcome back, $userName!",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          margin: const EdgeInsets.all(12),
+          borderRadius: 8,
         );
       } else {
-        isLoading = false;
-        update();
         Get.snackbar(
           "Login Failed",
-          response.message ?? "An unknown error occurred",
+          response.message,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          margin: const EdgeInsets.all(12),
+          borderRadius: 8,
         );
       }
     }
