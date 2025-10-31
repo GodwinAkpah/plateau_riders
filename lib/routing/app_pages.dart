@@ -3,6 +3,8 @@
 import 'package:get/get.dart';
 import 'package:plateau_riders/modules/main_app_screens/navigation/main_bottom_nav.dart';
 import 'package:plateau_riders/modules/main_app_screens/navigation/main_bottom_nav_bindings.dart';
+import 'package:plateau_riders/modules/main_app_screens/screens/trip_selection/trip_selection_binding.dart';
+import 'package:plateau_riders/modules/main_app_screens/screens/trip_selection/trip_selection_view.dart';
 import 'package:plateau_riders/modules/sign_in_screen/sign_in_screen_binding/sign_in_screen_bindings.dart';
 import 'package:plateau_riders/modules/sign_in_screen/sign_in_screen_views/sign_in_screen_views.dart';
 
@@ -46,7 +48,12 @@ class AppPages {
       binding: MainBottomNavBindings(),
     ),
     
-
+    GetPage(
+      name: _Paths.TRIP_SELECTION,
+      page: () => const TripSelectionView(),
+      binding: TripSelectionBinding(),
+      transition: Transition.rightToLeft, // Optional: Add a nice transition
+    ),
     //  GetPage(
     //   name: _Paths.SIGNUP_SCREEN,
     //   page: () => const SignUpScreen(),

@@ -8,6 +8,7 @@ abstract class Routes {
 
   
   static const MAINBOTTOMNAV = _Paths.MAINBOTTOMNAV;
+  static const TRIP_SELECTION = _Paths.TRIP_SELECTION;
  
   // signin screens
   
@@ -17,5 +18,6 @@ abstract class _Paths {
 
   static const SIGN_IN = '/sign_in';
   static const MAINBOTTOMNAV = '/main_bottom_nav';
+    static const TRIP_SELECTION = '/trip-selection';
 
 }
