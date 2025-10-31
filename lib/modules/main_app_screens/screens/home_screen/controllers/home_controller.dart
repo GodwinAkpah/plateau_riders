@@ -112,62 +112,53 @@ class HomeController extends GetxController {
 
   
     Future<void> searchTripsForBooking() async {
-    // 1. Validate that origin and destination have been selected.
     if (fromCity.value == 'Select City' || toCity.value == 'Select City') {
-      Get.snackbar("Input Required", "Please select both origin and destination cities.",
+      Get.snackbar("Input Required", "Please select origin and destination.",
           backgroundColor: Colors.orange, colorText: Colors.white);
       return;
     }
 
-    // --- FIX STARTS HERE ---
-
-    // 2. Find the full Terminal objects based on the selected city names.
     final originTerminal = terminals.firstWhereOrNull((t) => t.name == fromCity.value);
     final destinationTerminal = terminals.firstWhereOrNull((t) => t.name == toCity.value);
 
-    // 3. Perform an explicit null check. This is crucial for null safety.
     if (originTerminal == null || destinationTerminal == null) {
-      Get.snackbar("Error", "Selected city is invalid. Please re-select.",
+      Get.snackbar("Error", "Selected city is invalid.",
           backgroundColor: Colors.red, colorText: Colors.white);
       return;
     }
     
-    // After this check, Dart knows that originTerminal and destinationTerminal are NOT null.
-
-    // 4. Convert the UI date format ('dd-MM-yyyy') to the API format ('yyyy-MM-dd').
     final parsedDate = DateFormat('dd-MM-yyyy').parse(selectedDate.value);
     final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
-    // 5. Call the service and handle the response.
     isSearchingTrips.value = true;
     final response = await _bookingService.searchTrips(
       date: formattedDate,
-      originId: originTerminal.id, // Now safe to access .id
-      destinationId: destinationTerminal.id, // Now safe to access .id
+      originId: originTerminal.id,
+      destinationId: destinationTerminal.id,
     );
     isSearchingTrips.value = false;
 
     if (response.status == "success" && response.data != null) {
-      // We explicitly cast the response data to the correct type to be safe.
       final List<TripModel> fetchedTrips = response.data!;
       availableTrips.assignAll(fetchedTrips);
       
-      // Navigate to the Trip Selection screen with all the necessary data.
-      // The red lines will be gone because the compiler is now certain the variables are not null.
       Get.toNamed(
         Routes.TRIP_SELECTION,
         arguments: {
-          'trips': fetchedTrips, // Pass the strongly-typed list
-          'originName': originTerminal.name, // Now safe to access .name
-          'destinationName': destinationTerminal.name, // Now safe to access .name
-          'date': formattedDate, // Pass the YYYY-MM-DD date
+          'trips': fetchedTrips,
+          'originName': originTerminal.name,
+          'destinationName': destinationTerminal.name,
+          'date': formattedDate,
+          // --- NEW DATA BEING PASSED ---
+          'selectedVehicleName': selectedVehicleType.value,
+          'numberOfSeats': numberOfSeats.value,
+          // ---------------------------
         },
       );
     } else {
       Get.snackbar("Trip Search Failed", response.message,
           backgroundColor: Colors.red, colorText: Colors.white);
     }
-    // --- FIX ENDS HERE ---
   }
 
   // --- UI HELPER METHODS (BOTTOM SHEETS & PICKERS) ---

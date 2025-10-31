@@ -104,6 +104,7 @@
 import 'package:get/get.dart';
 import 'package:plateau_riders/services/core_service.dart';
 import 'package:plateau_riders/services/models/api_response_T.dart';
+import 'package:plateau_riders/services/models/booking_response_model.dart';
 import 'package:plateau_riders/services/models/terminal_model.dart';
 import 'package:plateau_riders/services/models/trip_model.dart';
 import 'package:plateau_riders/services/models/vehicle_model.dart';
@@ -171,7 +172,10 @@ class BookingService extends GetxService {
         status: response.status, message: response.message, data: []);
   }
 
-  Future<APIResponse<dynamic>> bookTrip({
+   /// Books multiple seats for a single trip by making sequential API calls.
+  /// It stops if any booking fails.
+   // This method now books ONE seat for ONE passenger.
+  Future<APIResponse<BookingResponseModel>> bookSingleSeat({
     required String customerName,
     required String customerEmail,
     required String customerPhone,
@@ -180,7 +184,6 @@ class BookingService extends GetxService {
     required String customerNextOfKinPhone,
     required int seatNo,
     required int tripId,
-    required Map<String, dynamic> payment,
   }) async {
     final payload = {
       "customer_name": customerName,
@@ -192,15 +195,25 @@ class BookingService extends GetxService {
       "seat_no": seatNo,
       "trip_id": tripId,
       "source": "mobile_admin",
-      "payment": payment,
+      "payment": {"method": "cash"},
     };
     
     final coreResponse = await _coreService.send('/bookings', payload);
 
-    return APIResponse<dynamic>(
-      status: coreResponse.status,
-      message: coreResponse.message,
-      data: coreResponse.data,
-    );
+    if (coreResponse.status == "success" && coreResponse.data != null) {
+      return APIResponse(
+        status: 'success',
+        message: 'Seat $seatNo booked successfully.',
+        data: BookingResponseModel.fromMap(coreResponse.data),
+      );
+    } else {
+      return APIResponse(
+        status: 'error',
+        message: 'Failed to book seat $seatNo: ${coreResponse.message}',
+        data: null,
+      );
+    }
   }
+
+
 }

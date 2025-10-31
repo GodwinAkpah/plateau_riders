@@ -40,15 +40,18 @@ class TripSelectionView extends GetView<TripSelectionController> {
                         topRight: Radius.circular(30),
                       ),
                     ),
+                    // Use Obx to rebuild the body when the filter or trips list changes
                     child: Obx(() => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildTripInfo(),
-                        const SizedBox(height: 20),
+                        _buildTripInfo(), // Displays Origin - Destination
+                        _buildVehicleFilterChips(), // The new filter chips
+                        const SizedBox(height: 10),
                         Expanded(
-                          child: controller.availableTrips.isEmpty
+                          child: controller.allAvailableTrips.isEmpty
                               ? _buildNoTripsAvailable()
-                              : _buildTripsList(),
+                              // Pass the computed 'filteredTrips' list to the builder
+                              : _buildTripsList(controller.filteredTrips),
                         ),
                       ],
                     )),
@@ -68,6 +71,7 @@ class TripSelectionView extends GetView<TripSelectionController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // A cleaner back button
           IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Get.back(),
@@ -95,44 +99,12 @@ class TripSelectionView extends GetView<TripSelectionController> {
     );
   }
 
-Widget _buildTripInfo() {
-    // --- FIX START ---
-    // Safely get the vehicle name from the first trip in the list.
-    final vehicleName = controller.availableTrips.isNotEmpty
-        ? (controller.availableTrips.first.vehicle?.name ?? 'Trips')
-        : 'Trips';
-    // --- FIX END ---
-
+  Widget _buildTripInfo() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: PlateauColors.primaryColor.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircleAvatar(
-                  radius: 5,
-                  backgroundColor: PlateauColors.primaryColor,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  vehicleName, // Use the safe variable
-                  style: GoogleFonts.urbanist(
-                    color: PlateauColors.primaryColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 15),
           Obx(() => Text(
                 '${controller.originName.value} - ${controller.destinationName.value}',
                 style: GoogleFonts.urbanist(
@@ -143,14 +115,54 @@ Widget _buildTripInfo() {
               )),
           const SizedBox(height: 5),
           Obx(() => Text(
-                '${vehicleName.toUpperCase()} TRIPS  ${controller.tripDate.value}',
+                'TRIPS FOR ${controller.tripDate.value}',
                 style: GoogleFonts.urbanist(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   color: Colors.grey[600],
                 ),
               )),
+          // The SizedBox is moved to the parent Column for better spacing
         ],
+      ),
+    );
+  }
+
+  Widget _buildVehicleFilterChips() {
+    // Add a little vertical spacing
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 15.0),
+      child: SizedBox(
+        height: 40,
+        child: ListView.separated(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          scrollDirection: Axis.horizontal,
+          itemCount: controller.uniqueVehicles.length,
+          itemBuilder: (context, index) {
+            final vehicle = controller.uniqueVehicles[index];
+            // The chip is wrapped in Obx to react to selection changes
+            return Obx(() {
+              final isSelected = controller.selectedVehicleId.value == vehicle.id;
+              return ChoiceChip(
+                label: Text(vehicle.name),
+                selected: isSelected,
+                onSelected: (_) => controller.setVehicleFilter(vehicle.id),
+                backgroundColor: Colors.grey[200],
+                selectedColor: PlateauColors.primaryColor.withOpacity(0.9),
+                labelStyle: TextStyle(
+                  color: isSelected ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: const BorderSide(color: Colors.transparent),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+              );
+            });
+          },
+          separatorBuilder: (context, index) => const SizedBox(width: 10),
+        ),
       ),
     );
   }
@@ -162,8 +174,9 @@ Widget _buildTripInfo() {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Ensure you have a bus image asset at this path
             Image.asset(
-              'assets/imgs/local.png', // Make sure you have a bus image in this path
+              'assets/imgs/bus.png', 
               height: 100,
               color: Colors.grey[400],
             ),
@@ -190,12 +203,24 @@ Widget _buildTripInfo() {
     );
   }
 
-  Widget _buildTripsList() {
+  Widget _buildTripsList(List<TripModel> trips) {
+    if (trips.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text(
+            'No trips available for this vehicle type.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.urbanist(fontSize: 16, color: Colors.grey[700]),
+          ),
+        ),
+      );
+    }
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      itemCount: controller.availableTrips.length,
+      itemCount: trips.length,
       itemBuilder: (context, index) {
-        final trip = controller.availableTrips[index];
+        final trip = trips[index];
         return _buildTripCard(trip);
       },
       separatorBuilder: (context, index) => const SizedBox(height: 15),
@@ -203,7 +228,6 @@ Widget _buildTripInfo() {
   }
 
  Widget _buildTripCard(TripModel trip) {
-    // --- FIX: Use the new property to check for availability ---
     bool isAvailable = trip.availableSeatsCount > 0;
 
     return Container(
@@ -220,7 +244,27 @@ Widget _buildTripInfo() {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Align content to the start
         children: [
+          // --- FIX: ADDED THIS WIDGET TO SHOW THE VEHICLE NAME ---
+          Row(
+            children: [
+              Icon(Icons.directions_bus, color: Colors.grey[600], size: 18),
+              const SizedBox(width: 8),
+              Text(
+                // Safely access the vehicle name, providing a fallback
+                trip.vehicle?.name ?? 'Unassigned Vehicle',
+                style: GoogleFonts.urbanist(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: 24), // Adds a nice visual separation
+          // ----------------------- END OF FIX -----------------------
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -233,7 +277,6 @@ Widget _buildTripInfo() {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // --- FIX: Use the new property to display the count ---
               Text(
                 '${trip.availableSeatsCount} seat(s) available',
                 style: GoogleFonts.urbanist(
