@@ -4,8 +4,6 @@ import 'package:plateau_riders/modules/main_app_screens/screens/passenger_detail
 class PassengerDetailsBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<PassengerDetailsController>(
-      () => PassengerDetailsController(),
-    );
+    Get.lazyPut<PassengerDetailsController>(() => PassengerDetailsController());
   }
 }

@@ -5,8 +5,6 @@ import 'package:plateau_riders/modules/app_colors/plateau_colors.dart';
 import 'package:plateau_riders/modules/main_app_screens/screens/passenger_details/passenger_details_controller.dart';
 import 'package:plateau_riders/services/models/passenger_info_model.dart';
 
-
-
 class PassengerDetailsView extends GetView<PassengerDetailsController> {
   const PassengerDetailsView({Key? key}) : super(key: key);
 
@@ -15,9 +13,10 @@ class PassengerDetailsView extends GetView<PassengerDetailsController> {
     return Scaffold(
       appBar: AppBar(
         title: Obx(() => Text(
-          'Passenger ${controller.currentPage.value + 1} of ${controller.numberOfSeats}',
-          style: GoogleFonts.urbanist(),
-        )),
+              // Use the selectedSeats list to show the current seat number
+              'Details for Seat ${controller.selectedSeats[controller.currentPage.value]}',
+              style: GoogleFonts.urbanist(fontWeight: FontWeight.bold),
+            )),
       ),
       body: Column(
         children: [
@@ -25,7 +24,7 @@ class PassengerDetailsView extends GetView<PassengerDetailsController> {
             child: PageView.builder(
               controller: controller.pageController,
               onPageChanged: controller.onPageChanged,
-              itemCount: controller.numberOfSeats,
+              itemCount: controller.numberOfSeats, // Now this exists
               itemBuilder: (context, index) {
                 return _buildPassengerForm(controller.passengerForms[index]);
               },
@@ -116,22 +115,23 @@ class PassengerDetailsView extends GetView<PassengerDetailsController> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Obx(() {
+        // --- ALL FIXES APPLIED HERE ---
         final isLastPage = controller.currentPage.value == controller.numberOfSeats - 1;
         return SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: controller.isBooking.value
+            onPressed: controller.isBooking.value // Check the new 'isBooking' property
                 ? null
-                : (isLastPage ? controller.submitAllBookings : controller.nextPage),
+                : (isLastPage ? controller.proceedToConfirmation : controller.nextPage), // Call the renamed method
             style: ElevatedButton.styleFrom(
               backgroundColor: PlateauColors.primaryColor,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             ),
-            child: controller.isBooking.value
+            child: controller.isBooking.value // Use '.value' here
                 ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white))
                 : Text(
-                    isLastPage ? 'Confirm All Bookings' : 'Next',
+                    isLastPage ? 'Proceed to Confirmation' : 'Next Passenger',
                     style: GoogleFonts.urbanist(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                   ),
           ),
